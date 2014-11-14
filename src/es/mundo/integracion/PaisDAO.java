@@ -1,0 +1,226 @@
+package es.mundo.integracion;
+
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import es.mundo.modelo.Pais;
+
+public class PaisDAO {
+	private Connection cx;
+	
+	private void conectar(){
+		try {
+		     Class.forName("com.mysql.jdbc.Driver"); 
+			cx=DriverManager.getConnection("jdbc:mysql://localhost:3306/MUNDO","root","root");
+			cx.setAutoCommit(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private void desconectar(){	
+		try {
+			cx.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	public int darAlta(Pais pais){
+		
+		int idRetornar = 0;
+		try {
+			//1. conectar
+			conectar();
+			
+			//2. preparar la sql (query)
+			PreparedStatement ps= cx.prepareStatement("INSERT INTO PAIS VALUES(?,?,?)");
+			
+			 //2.1. setear los interrogantes
+			ps.setInt(1, 0);
+			ps.setString(2, pais.getNombre());
+			ps.setInt(3, pais.getHabitantes());
+			
+			//3. ejecutar la consulta
+			int filasAfectadas = ps.executeUpdate();
+			
+			//4. hacer el commit
+			cx.commit();
+			if(filasAfectadas>=1){
+				idRetornar= ultimoId();
+			}
+			//5. cerrar la conexion
+			desconectar();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return idRetornar;
+	}
+	public Pais consultarUno(int id) {
+		Pais p = new Pais();
+		
+		try {
+			//1. conectar
+			conectar();
+			//2. preparar la consulta
+			PreparedStatement ps;
+			ps= cx.prepareStatement("select * from pais where id=?");
+			//2.1 setear los interrogantes
+			ps.setInt(1,id);
+		//3.ejecutar la consulta
+			ResultSet rs= ps.executeQuery();
+		//4. llenar el objeto pais con los datos de respuesta de la BBDD
+			//NOTA la respuesta viene en un objeto Resultset
+			if(rs.next()) {
+				p.setId(rs.getInt("id"));
+				p.setNombre(rs.getNString("nombre"));
+				p.setHabitantes(rs.getInt("habitantes"));
+			}
+		//5. desconectar
+		desconectar();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return p;
+	}
+
+
+	public ArrayList<Pais> consultarTodos() {
+		ArrayList<Pais> paises= new ArrayList<Pais>();
+		
+		try {
+			//1. conectar
+			conectar();
+			//2. preparar la sentencia
+			PreparedStatement ps= cx.prepareStatement("SELECT * FROM PAIS");
+			//3. ejecutar la consulta
+			ResultSet consulta= ps.executeQuery();
+			//4. bajar el resultado de la consulta y ponerlo en el Arraylist
+			while(consulta.next()){
+				Pais p = new Pais();
+				p.setId(consulta.getInt("id"));
+				p.setNombre(consulta.getString("nombre"));
+				p.setHabitantes(consulta.getInt("habitantes"));
+				paises.add(p);
+			}
+			//5. desconectar
+			desconectar();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return paises;
+	}
+
+	public int ultimoId(){
+		int  idM=90;
+		try {
+			//1. conectar
+			conectar();
+			//2. preparar la sentencia
+			PreparedStatement ps= cx.prepareStatement("SELECT MAX(ID) AS ULTIMO FROM PAIS");
+			//3. ejecutar la consulta
+			ResultSet consulta= ps.executeQuery();
+			//4. bajar el resultado de la consulta y ponerlo en el Arraylist
+			if(consulta.next()){
+				 idM=consulta.getInt("ULTIMO");
+			}
+			//5. desconectar
+			desconectar();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return idM;
+	}
+	 public ArrayList<Pais> consultarNombre(String nombre) {
+	        ArrayList<Pais> paises= new ArrayList<Pais>();
+	       try {
+	            //1. conectar
+	            conectar();
+	            //2. preparar la sentencia
+	            PreparedStatement ps = cx.prepareStatement("SELECT * FROM PAIS WHERE NOMBRE LIKE ?");
+	            // 2.1 setear el interrogante
+	            //ps.setString(1, "\"" +nombre + "%" + "\"" );
+	            ps.setString(1, "%" +nombre+  "%");
+	            //3. ejecutar la consulta
+	            ResultSet consulta = ps.executeQuery();
+	            //4. bajar el resultado de la consulta y ponerlo en el arrayList
+	            while(consulta.next()) {
+	                Pais p = new Pais();
+	                p.setId(consulta.getInt("id"));
+	                p.setNombre(consulta.getString("nombre"));
+	                p.setHabitantes(consulta.getInt("habitantes"));
+	                paises.add(p);
+	            }
+	            //5. desconectar
+	            desconectar();
+	        } catch (SQLException e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+	        return paises;
+	    }
+
+	public int borrar(int id) {
+		int filasAfectadas=0;
+		try {
+		//1. conectar
+		conectar();
+		//2. preparar la consulta
+			PreparedStatement ps= cx.prepareStatement("DELETE FROM PAIS WHERE ID =?");
+			//3. setear los interrogantes
+			 ps.setInt(1, id);
+		//4.ejecutar la consulta
+			 filasAfectadas= ps.executeUpdate();
+		//5. hacer el commit
+			 cx.commit(); 
+		//6. cerrar la conexion
+             desconectar();
+		} catch (SQLException e) {
+		// TODO Auto-generated catch block
+					e.printStackTrace();
+		}
+		return filasAfectadas;
+	}
+	public int actualizar(int id, String nombre, int habitantes) {
+        int filasAfectadas=0;
+        try { 
+            //conectar
+              conectar();
+            //preparar la consulta..
+              PreparedStatement ps= cx.prepareStatement("UPDATE PAIS SET NOMBRE=?,HABITANTES=? WHERE ID=?");
+           // setear los ?                                                    UPDATE PAIS SET NOMBRE="ITALIA",HABITANTES=99 WHERE ID=4
+              ps.setString(1, nombre);
+              ps.setInt(2, habitantes);
+              ps.setInt(3, id);
+           // ejecutar la consulta
+              filasAfectadas= ps.executeUpdate();
+           // hacer el commit
+              cx.commit();
+          
+           //cerrar la conexion
+              desconectar();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+       return filasAfectadas;
+    }
+}
