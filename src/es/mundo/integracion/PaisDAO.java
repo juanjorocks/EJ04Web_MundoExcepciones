@@ -87,7 +87,7 @@ public class PaisDAO {
 			//NOTA la respuesta viene en un objeto Resultset
 			if(rs.next()) {
 				p.setId(rs.getInt("id"));
-				p.setNombre(rs.getNString("nombre"));
+				p.setNombre(rs.getString("nombre"));
 				p.setHabitantes(rs.getInt("habitantes"));
 			}
 		//5. desconectar

@@ -40,7 +40,7 @@ public class ConsultarUnoServlet extends HttpServlet {
 		request.setAttribute("pais", pais);
 		//redirigir hacia la pagina jsp que muestra los datos del pais
 		RequestDispatcher rd;
-		rd=request.getRequestDispatcher("vistaIndividual.jsp");
+		rd=request.getRequestDispatcher("vistaindividual.jsp");
 		rd.forward(request, response);
 	}
 

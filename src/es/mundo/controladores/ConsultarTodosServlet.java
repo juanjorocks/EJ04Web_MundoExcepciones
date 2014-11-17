@@ -16,7 +16,7 @@ import es.mundo.modelo.Pais;
 /**
  * Servlet implementation class ConsultartodosServlet
  */
-@WebServlet("/Consultartodos")
+@WebServlet("/ConsultarTodos")
 public class ConsultarTodosServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
