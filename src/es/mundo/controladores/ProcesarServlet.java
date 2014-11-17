@@ -45,7 +45,7 @@ public class ProcesarServlet extends HttpServlet {
 			h= negocio.borrar(id);
 		}
 		if(actualizar!=null){
-			h= negocio.actualizar(id, nombre,habitantes);
+			h= negocio.actualizar(id, nombre, habitantes);
 		}
 		String mensaje= negocio.borrar(id);
 		//meter el mensaje en el request

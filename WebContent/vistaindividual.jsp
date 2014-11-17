@@ -23,7 +23,7 @@
       <td><input type="text" name="habitantes" value="<%=pais.getHabitantes() %>"/></td>
   </tr>
 </table>
-<input class="botones" type="submit" value="Borrar" id="borrar" name="borrar"/>
+ <input class="botones" type="submit" value="Borrar" id="borrar" name="borrar"/>
  <input class="botones" type="submit" value="Actualizar" id="actualizar" name="actualizar"/>
  
 </form>

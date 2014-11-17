@@ -40,7 +40,7 @@ public class Negocio {
 		 //mandar un correo al administrador..
 		int paisesBorrados= paisdao.borrar(id);
 		if(paisesBorrados>=1){
-			msg="Se han borrado" +paisesBorrados+ "paises";
+			msg="Se han borrado " +paisesBorrados+ "paises";
 		}
 		else{
 			msg="No se ha podido borrar";
