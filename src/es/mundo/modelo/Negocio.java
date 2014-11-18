@@ -11,9 +11,19 @@ public class Negocio {
       public int darAlta(String nombre, int habitantes) {
        // validar el pais...
         // mandar un correo al alguna institucion
+    	  try {
+    		  
         Pais pais= new Pais(nombre,habitantes);
         int id =paisdao.darAlta(pais);
       return  id;
+    	  }catch (PaisVacioException e) {
+  			// TODO Auto-generated catch block
+  			e.printStackTrace();
+  			
+  		}
+    	  finally{
+  			System.out.println("NO SE ADMITEN PAISES VACIOS");
+  		}
     }
 
     public Pais consultarUno(int id) {
